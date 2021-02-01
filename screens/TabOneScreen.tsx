@@ -28,7 +28,7 @@ export default function TabOneScreen() {
         console.log(accelerometerData);
         console.log(accelerometerData.x*180.0/(Math.PI));
         console.log(accelerometerData.y*180.0/(Math.PI));
-        console.log(accelerometerData.z*180.0/(Math.PI));
+        console.log(accelerometerData.z*180.0/(Math.PI)); 
         setData(accelerometerData);
       })
     );
