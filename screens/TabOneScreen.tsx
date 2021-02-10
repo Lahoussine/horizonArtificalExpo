@@ -1,10 +1,10 @@
-import React , { useState, useEffect }  from 'react';
+import React , { useState, useEffect , useRef  }  from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 //import { Text, View,  } from '../components/Themed';
 import { Accelerometer, Gyroscope, Magnetometer,Barometer } from 'expo-sensors';
-
+import Svg, { Circle, Path } from 'react-native-svg';
 export default function TabOneScreen() {
   const [data, setData] = useState({
     x: 0,
@@ -18,26 +18,22 @@ export default function TabOneScreen() {
   };
 
   const _fast = () => {
-    Accelerometer.setUpdateInterval(16);
+    Accelerometer.setUpdateInterval(100);
   };
 
 
   const _subscribe = () => {
     setSubscription(
-      Accelerometer.addListener(accelerometerData => {
-        console.log(accelerometerData),
-        console.log(accelerometerData.x*180.0/(Math.PI));
-        console.log(accelerometerData.y*180.0/(Math.PI));
-        console.log(accelerometerData.z*180.0/(Math.PI)); 
+      Accelerometer.addListener(accelerometerData => { 
         setData(accelerometerData);
       })
     );
-
+/*
     setSubscription(
       Gyroscope.addListener(gyro => {
 
       })
-    );
+    );*/
   };
 
   const _unsubscribe = () => {
@@ -51,145 +47,38 @@ export default function TabOneScreen() {
   }, []);
 
   const { x, y, z } = data;
-  const svgNS = "http://www.w3.org/2000/svg";
 
-
-function drawCenterLine(x1, y1, x2, y2, svg) {
-  var centreLineHorizontal = document.createElementNS(svgNS, "line");
-  centreLineHorizontal.setAttributeNS(null, "x1", x1);
-  centreLineHorizontal.setAttributeNS(null, "y1", y1);
-  centreLineHorizontal.setAttributeNS(null, "x2", x2);
-  centreLineHorizontal.setAttributeNS(null, "y2", y2);
-  centreLineHorizontal.setAttributeNS(null, "stroke", "grey");
-  centreLineHorizontal.setAttributeNS(null, "stroke-width", 1);
-  centreLineHorizontal.setAttributeNS(null, "stroke-opacity", 0.5);
-  svg.appendChild(centreLineHorizontal);
+  const updatePathSky=  ()=>{
+      var W = 300;
+      var H= 300;
+      return "M"+(W/2)+","+(H/2)+" L"+((W/2)-80)+","+(H/2)+" A10,10 1 0,1 "+((W/2)+80)+","+(H/2)+" z";
+}
+const rotateSky=  (angle)=>{
+  var W = 300;
+  var H= 300;
+  return "rotate("+angle+","+(W/2)+","+(H/2)+")";
 }
 
-function drawCardinalDirection(x, y, displayText, svg) {
-  var direction = document.createElementNS(svgNS, "text");
-  direction.setAttributeNS(null, "x", x);
-  direction.setAttributeNS(null, "y", y);
-  direction.setAttributeNS(null, "font-size", "20px");
-  direction.setAttributeNS(null, "font-family", "Helvetica");
-  direction.setAttributeNS(null, "fill", "white");
-  var textNode = document.createTextNode(displayText);
-  direction.appendChild(textNode);
-  svg.appendChild(direction);
+const rotateGround=  (angle)=>{
+  var W = 300;
+  var H= 300;
+  return "rotate("+(180+angle)+","+(W/2)+","+(H/2)+")";
 }
+  const updatePathGround=  ()=>{
+        var W = 300;
+        var H= 300;
+        return "M"+(W/2)+","+(H/2)+" L"+((W/2)-80)+","+(H/2)+" A10,10 1 0,1 "+((W/2)+80)+","+(H/2)+" z";
+  }
+    
+
+  
   return (
     <View style={styles.container}>
       <View>
-      <svg id="compass" ref={svg => {
-
-
-                if (svg == null) {
-                    //when closing expandable row, svg is null thwn we get error
-                    //to avoid this, if svg ref is null then do nothing and return
-                    return;
-                }
-
-                //get size of current svg
-                var H= svg.height.baseVal.value
-                var W= svg.width.baseVal.value
-
-                var newpath = document.createElementNS('http://www.w3.org/2000/svg',"path"); 
-                newpath.setAttributeNS(null,"id", "pathIdD");  
-                newpath.setAttributeNS(null,"d", "M"+(W/2)+","+(H/2)+" L"+((W/2)-80)+","+(H/2)+" A10,10 1 0,1 "+((W/2)+80)+","+(H/2)+" z");  
-//                newpath.setAttributeNS(null,"d", "M115,115 L115,5 A110,110 1 0,1 190,35 z");  
-                newpath.setAttributeNS(null,"stroke", "#65AED1");  
-                newpath.setAttributeNS(null,"stroke-width", 3);  
-                newpath.setAttributeNS(null,"opacity", 1);  
-                newpath.setAttributeNS(null,"fill", "#65AED1");
-                //transform: rotate(180 - rqrd. angle);
-                //newpath.setAttributeNS(null, "transform", "rotate(" + -90  + ","+ (W/2)+", "+(H/2)+")");
-                svg.appendChild(newpath);
-
-
-                var newpath2 = document.createElementNS('http://www.w3.org/2000/svg',"path"); 
-                newpath2.setAttributeNS(null,"id", "pathIdD");  
-                newpath2.setAttributeNS(null,"d", "M"+(W/2)+","+(H/2)+" L"+((W/2)-80)+","+(H/2)+" A10,10 1 0,1 "+((W/2)+80)+","+(H/2)+" z");  
-//                newpath.setAttributeNS(null,"d", "M115,115 L115,5 A110,110 1 0,1 190,35 z");  
-                newpath2.setAttributeNS(null,"stroke", "#3D2922");  
-                newpath2.setAttributeNS(null,"stroke-width", 3);  
-                newpath2.setAttributeNS(null,"opacity", 1);  
-                newpath2.setAttributeNS(null,"fill", "#3D2922");
-                //transform: rotate(180 - rqrd. angle);
-                newpath2.setAttributeNS(null, "transform", "rotate(" + 180  + ","+ (W/2)+", "+(H/2)+")");
-                svg.appendChild(newpath2);
-
-
-
-                //To do calculate triangle rotation
-                var pointer = document.createElementNS(svgNS, "polygon");
-                var pointCoordinate = W/2+",0 "+((W/2)+5)+",12 "+((W/2)-5)+",12";
-                pointer.setAttributeNS(null, "points", pointCoordinate );
-                pointer.setAttributeNS(null, "fill", "red");
-                pointer.setAttributeNS(null, "transform", "rotate(" + 30  + ","+ W/2+", "+H/2+")");
-                svg.appendChild(pointer);
-
-
-                var c = document.createElementNS(svgNS, "circle");
-                c.setAttributeNS(null, "cx", W/2 );
-                c.setAttributeNS(null, "cy", H/2 );
-                c.setAttributeNS(null, "r", 20);
-                c.setAttributeNS(null, "fill", "white");
-                c.setAttributeNS(null, "fill-opacity", 0.1);
-                svg.appendChild(c);
-                drawCenterLine(W/2, 100, W/2, 200, svg);
-                drawCenterLine(100, H/2, 200, H/2, svg);
-                drawCardinalDirection(143, 72, "N", svg);
-                drawCardinalDirection(228, 158, "E", svg);
-                drawCardinalDirection(143, 242, "S", svg);
-                drawCardinalDirection(58, 158, "W", svg);
-
-                let w, y2;
-                for (var i = 0; i < 360; i += 2) {
-                    // draw degree lines
-                    var s = "grey";
-                    if (i == 0 || i % 30 == 0) {
-                        w = 3;
-                        s = "white";
-                        y2 = 50;
-                    } else {
-                        w = 1;
-                        y2 = 45;
-                    }
-
-                    var l1 = document.createElementNS(svgNS, "line");
-                    l1.setAttributeNS(null, "x1", 150);
-                    l1.setAttributeNS(null, "y1", 30);
-                    l1.setAttributeNS(null, "x2", 150);
-                    l1.setAttributeNS(null, "y2", y2);
-                    l1.setAttributeNS(null, "stroke", s);
-                    l1.setAttributeNS(null, "stroke-width", w);
-                    l1.setAttributeNS(null, "transform", "rotate(" + i + ", 150, 150)");
-                    svg.appendChild(l1);
-
-                    // draw degree value every 30 degrees
-                    if (i % 30 == 0) {
-                        var t1 = document.createElementNS(svgNS, "text");
-                        if (i > 100) {
-                            t1.setAttributeNS(null, "x", 140);
-                        } else if (i > 0) {
-                            t1.setAttributeNS(null, "x", 144);
-                        } else {
-                            t1.setAttributeNS(null, "x", 147);
-                        }
-                        t1.setAttributeNS(null, "y", 24);
-                        t1.setAttributeNS(null, "font-size", "11px");
-                        t1.setAttributeNS(null, "font-family", "Helvetica");
-                        t1.setAttributeNS(null, "fill", "grey");
-                        t1.setAttributeNS(null, "style", "letter-spacing:1.0");
-                        t1.setAttributeNS(null, "transform", "rotate(" + i + ", 150, 150)");
-                        var textNode = document.createTextNode(i);
-                        t1.appendChild(textNode);
-                        svg.appendChild(t1);
-                    }
-                }
-
-            }} width="300" height="300" xmlns="http://www.w3.org/2000/svg">
-            </svg>
+      <Svg id="compass" width="300" height="300" xmlns="http://www.w3.org/2000/svg">                  
+                  <Path  d={updatePathSky()}  fill="#65AED1"  transform = {rotateSky(round(Math.atan(x/z)*180.0/(Math.PI)))}  />
+                  <Path d={updatePathGround()}  fill="#3D2922" transform = {rotateGround(round(Math.atan(x/z)*180.0/(Math.PI)))}/>                   
+      </Svg>
 
       </View>
       <View>
