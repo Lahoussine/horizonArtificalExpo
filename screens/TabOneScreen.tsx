@@ -14,11 +14,11 @@ export default function TabOneScreen() {
   const [subscription, setSubscription] = useState(null);
 
   const _slow = () => {
-    Accelerometer.setUpdateInterval(1000);
+    Accelerometer.setUpdateInterval(500);
   };
 
   const _fast = () => {
-    Accelerometer.setUpdateInterval(100);
+    Accelerometer.setUpdateInterval(500);
   };
 
 
@@ -46,38 +46,42 @@ export default function TabOneScreen() {
     return () => _unsubscribe();
   }, []);
 
-  const { x, y, z } = data;
+const { x, y, z } = data;
 
-  const updatePathSky=  ()=>{
+const updatePathSky=  ()=>{
       var W = 300;
       var H= 300;
-      return "M"+(W/2)+","+(H/2)+" L"+((W/2)-80)+","+(H/2)+" A10,10 1 0,1 "+((W/2)+80)+","+(H/2)+" z";
+      return "M"+(W/2)+","+((H/2))+" L"+((W/2)-80)+","+(H/2)+" A10,10 1 0,1 "+((W/2)+80)+","+(H/2)+" z";
 }
-const rotateSky=  (angle)=>{
-  var W = 300;
-  var H= 300;
-  return "rotate("+(angle)+","+(W/2)+","+(H/2)+")";
-}
-
-const rotateGround=  (angle)=>{
-  var W = 300;
-  var H= 300;
-  return "rotate("+(180+angle)+","+(W/2)+","+(H/2)+")";
-}
-  const updatePathGround=  ()=>{
+const updatePathGround=  ()=>{
         var W = 300;
         var H= 300;
         return "M"+(W/2)+","+(H/2)+" L"+((W/2)-80)+","+(H/2)+" A10,10 1 0,1 "+((W/2)+80)+","+(H/2)+" z";
   }
     
+const rotateSky=  (angle)=>{
+    var W = 300;
+    var H= 300;
+    return "rotate("+(angle)+","+(W/2)+","+((H/2))+")";
+}
+  
+const rotateGround=  (angle)=>{
+    var W = 300;
+    var H= 300;
+    return "rotate("+(180+angle)+","+(W/2)+","+((H/2))+") ";
+}
+
+const translate=(degree)=>{
+return "translate(0 "+(-degree)+")";
+}
 
   
   return (
     <View style={styles.container}>
       <View>
       <Svg id="compass" width="300" height="300" xmlns="http://www.w3.org/2000/svg">          
-                  <Path  d={updatePathSky()}  fill="#65AED1"  transform = {rotateSky(round(Math.atan(x/z)*180.0/(Math.PI)))}  />
-                  <Path d={updatePathGround()}  fill="#3D2922" transform = {rotateGround(round(Math.atan(x/z)*180.0/(Math.PI)))}/>  
+                  <Path  d={updatePathSky()}  fill="#65AED1"  transform = {rotateSky(round(Math.atan(x/z)*180.0/(Math.PI)))+  translate(round( 90.0- (Math.atan(y/z)*180.0/(Math.PI))  )) }  />
+                  <Path d={updatePathGround()}  fill="#3D2922" transform = {rotateGround(round(Math.atan(x/z)*180.0/(Math.PI)))+  translate(-round( 90.0- (Math.atan(y/z)*180.0/(Math.PI) )  )) }/>  
                   <Line x1="160" y1="150" x2="200" y2="150"  stroke="red" strokeWidth="2" />        
                   <Line x1="100" y1="150" x2="140" y2="150"  stroke="red" strokeWidth="2" />           
       </Svg>
