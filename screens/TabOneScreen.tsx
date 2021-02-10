@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import EditScreenInfo from '../components/EditScreenInfo';
 //import { Text, View,  } from '../components/Themed';
 import { Accelerometer, Gyroscope, Magnetometer,Barometer } from 'expo-sensors';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Circle, Line, Path } from 'react-native-svg';
 export default function TabOneScreen() {
   const [data, setData] = useState({
     x: 0,
@@ -56,7 +56,7 @@ export default function TabOneScreen() {
 const rotateSky=  (angle)=>{
   var W = 300;
   var H= 300;
-  return "rotate("+angle+","+(W/2)+","+(H/2)+")";
+  return "rotate("+(angle)+","+(W/2)+","+(H/2)+")";
 }
 
 const rotateGround=  (angle)=>{
@@ -75,9 +75,11 @@ const rotateGround=  (angle)=>{
   return (
     <View style={styles.container}>
       <View>
-      <Svg id="compass" width="300" height="300" xmlns="http://www.w3.org/2000/svg">                  
+      <Svg id="compass" width="300" height="300" xmlns="http://www.w3.org/2000/svg">          
                   <Path  d={updatePathSky()}  fill="#65AED1"  transform = {rotateSky(round(Math.atan(x/z)*180.0/(Math.PI)))}  />
-                  <Path d={updatePathGround()}  fill="#3D2922" transform = {rotateGround(round(Math.atan(x/z)*180.0/(Math.PI)))}/>                   
+                  <Path d={updatePathGround()}  fill="#3D2922" transform = {rotateGround(round(Math.atan(x/z)*180.0/(Math.PI)))}/>  
+                  <Line x1="160" y1="150" x2="200" y2="150"  stroke="red" strokeWidth="2" />        
+                  <Line x1="100" y1="150" x2="140" y2="150"  stroke="red" strokeWidth="2" />           
       </Svg>
 
       </View>
